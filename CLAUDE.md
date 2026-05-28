@@ -12,8 +12,8 @@ Before getting started, obtain the following from the BrainBox team:
 |---|---|
 | `NPM_TOKEN` | Installs the BrainBox CLI and skills |
 | Org & project name | Identifies your BrainBox project |
-| `BRAINBOX_API_KEY` | Org-level key for CLI operations |
-| `BRAINBOX_MCP_KEY` | Project-level key for the BrainBox MCP server |
+| `BRAINBOX_API_KEY` | Org-level key for CLI operations (starts with `bb_`) |
+| `BRAINBOX_MCP_KEY` | Project-level key for the BrainBox MCP server (starts with `bb_proj_`) |
 
 ---
 
