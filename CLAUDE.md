@@ -12,7 +12,8 @@ Before getting started, obtain the following from the BrainBox team:
 |---|---|
 | `NPM_TOKEN` | Installs the BrainBox CLI and skills |
 | Org & project name | Identifies your BrainBox project |
-| API key (`bb_proj_...`) | Authenticates against the BrainBox MCP server |
+| `BRAINBOX_API_KEY` | Org-level key for CLI operations |
+| `BRAINBOX_MCP_KEY` | Project-level key for the BrainBox MCP server |
 
 ---
 
@@ -32,6 +33,14 @@ Before getting started, obtain the following from the BrainBox team:
    npm install
    ```
 
+3. **Install BrainBox skills for Claude Code:**
+
+   ```bash
+   npx skills add git@github.com:brainbox-labs/ctx-layer-clients.git brainbox
+   ```
+
+   This installs slash commands (`/brain-setup`, `/brain-recall`, `/brain-workflow`, etc.) that guide you through common BrainBox tasks directly from Claude Code.
+
 ---
 
 ## MCP Server Configuration
@@ -46,7 +55,7 @@ Add the following to your Claude MCP configuration (e.g., `.mcp.json`):
     "brain": {
       "url": "https://ctx.brainbox-ai.app/api/mcp",
       "headers": {
-        "Authorization": "Bearer <bb_proj_TOKEN>"
+        "Authorization": "Bearer <BRAINBOX_MCP_KEY>"
       },
       "type": "http"
     }
