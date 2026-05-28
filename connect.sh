@@ -1,73 +1,61 @@
 #!/usr/bin/env bash
-# Connects the ecommerce demo to BrainBox using the brainbox repo CLI flow:
+# Connects your database to BrainBox using the brainbox CLI:
 #   1. Init repo
 #   2. Stage sources
 #   3. Commit + push
-#   4. Generate context layer (LLM, ~2 min)
-#   5. Approve + pull
+#   4. Generate context layer (LLM, ~2-5 min) — run manually
+#   5. Pull active layer — run manually
 #
-# Prerequisites: brainbox CLI in PATH, .env loaded
+# Prerequisites: .env loaded with DATABASE_URL, BRAINBOX_ORG, BRAINBOX_PROJECT
 # Usage: npm run connect
 
 set -euo pipefail
 source .env
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-API_URL="${BRAINBOX_API_URL:-http://localhost:3001}"
 ORG="${BRAINBOX_ORG:?Set BRAINBOX_ORG in .env}"
 PROJECT="${BRAINBOX_PROJECT:?Set BRAINBOX_PROJECT in .env}"
-DB_URL="${DATABASE_URL:-${DB:-}}"
+DB_URL="${DATABASE_URL:?Set DATABASE_URL in .env}"
 
 echo "================================================================"
-echo " BrainBox E-Commerce Demo — Setup"
+echo " BrainBox — Connect"
 echo "================================================================"
-echo " API:     $API_URL"
 echo " Org:     $ORG"
 echo " Project: $PROJECT"
 echo ""
 
-# Find brainbox CLI (assumes local install in node_modules)
-# if globally installed, use that otherwise fallback to local node_modules
 if command -v brainbox &> /dev/null; then
   echo "Using global brainbox CLI"
+elif [ -f "./node_modules/.bin/brainbox" ]; then
+  export PATH="$PATH:./node_modules/.bin"
+  echo "Using local brainbox CLI from node_modules"
 else
-  if [ -f "./node_modules/.bin/brainbox" ]; then
-    export PATH="$PATH:./node_modules/.bin"
-    echo "Using local brainbox CLI from node_modules"
-  else
-    echo "Error: brainbox CLI not found. Please install it globally or locally in node_modules."
-    exit 1
-  fi
+  echo "Error: brainbox CLI not found. Run: npm install"
+  exit 1
 fi
 
 # ── Step 1: Init repo ─────────────────────────────────────────────────────────
-echo "[1/5] Initialising repo…"
+echo "[1/3] Initialising repo…"
 brainbox repo init
 
 # ── Step 2: Stage sources ─────────────────────────────────────────────────────
-echo "[2/5] Staging sources…"
-brainbox meta ingest db "${DB_URL:?Set DATABASE_URL (or DB) in .env}" --tables amazon_disbursment,amazon_fee_preview
-# shellcheck disable=SC2086
-# brainbox meta ingest doc "$SCRIPT_DIR"/policies/*.md
+echo "[2/3] Staging database…"
+brainbox meta ingest db "$DB_URL"
 
 # ── Step 3: Commit + push ─────────────────────────────────────────────────────
-echo "[3/5] Committing and pushing…"
-brainbox repo commit -m "ecommerce schema + store policies"
+echo "[3/3] Committing and pushing…"
+brainbox repo commit -m "initial schema"
 brainbox repo push
-
-exit
-
-# ── Step 4: Generate context layer (LLM, ~2 min) ─────────────────────────────
-echo "[4/5] Generating context layer (LLM, ~2 min)…"
-brainbox repo meta create -m "ecommerce context layer"
-
-# ── Step 5: Approve + pull ────────────────────────────────────────────────────
-echo "[5/5] Approving and pulling active layer…"
-# brainbox repo meta approve
-# brainbox repo pull
 
 echo ""
 echo "================================================================"
-echo " Done! Start the MCP server:  npm run serve"
-echo " Then open Claude Desktop and ask questions from DEMO.md"
+echo " Done! Next steps (run manually):"
+echo ""
+echo " 4. Generate context layer (~2-5 min):"
+echo "    brainbox repo meta create -m \"initial context layer\""
+echo ""
+echo " 5. Pull the active layer once approved:"
+echo "    brainbox repo pull"
+echo ""
+echo " 6. Start the local MCP server:"
+echo "    npm run serve"
 echo "================================================================"
