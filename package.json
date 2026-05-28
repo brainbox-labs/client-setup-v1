@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@brainbox-labs/cli": "^0.4.1",
+    "@brainbox-labs/sdk": "^0.4.0"
+  }
+}
