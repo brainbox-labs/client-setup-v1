@@ -1,3 +1,15 @@
 {
-  "mcpServers": {}
+  "mcpServers": {
+    "brain": {
+      "type": "http",
+      "url": "https://ctx.brainbox-ai.app/api/mcp",
+      "headers": {
+        "Authorization": "Bearer bb_proj_KEY"
+      }
+    },
+    "data": {
+      "type": "http",
+      "url": "http://localhost:3100/mcp"
+    }
+  }
 }
