@@ -22,7 +22,7 @@ Before getting started, obtain the following from the BrainBox team:
 1. **Copy and configure the environment file:**
 
    ```bash
-   cp .env.example .env
+   cp env.example .env
    # Open .env and fill in your credentials
    ```
 
