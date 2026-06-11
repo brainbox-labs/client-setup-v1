@@ -73,6 +73,17 @@ claude mcp add --transport http brainbox-local http://localhost:3100/mcp
 
 ---
 
+## Ingesting Data into the Brain
+
+Use the `/brain-learn` skill to teach BrainBox about your data. It supports two paths:
+
+- **Postgres schemas / documents** — staged through the connector pipeline (`ingest → commit → push → generate → approve`)
+- **Events (meeting notes, emails, tickets)** — sent directly via the `process_event` MCP tool, no pipeline needed
+
+To start, simply run `/brain-learn` in Claude Code and follow the guided steps.
+
+---
+
 ## Querying the Brain
 
 The BrainBox brain describes **what** your data means — entities, relationships, business rules, and workflows. For live data, use the local MCP tools or direct database access.
