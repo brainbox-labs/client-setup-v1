@@ -33,13 +33,7 @@ Before getting started, obtain the following from the BrainBox team:
    npm install
    ```
 
-3. **Install BrainBox skills for Claude Code:**
-
-   ```bash
-   npx skills add git@github.com:brainbox-labs/ctx-layer-clients.git brainbox --scope project --tool claude
-   ```
-
-   This installs slash commands (`/brain-setup`, `/brain-recall`, `/brain-workflow`, etc.) that guide you through common BrainBox tasks directly from Claude Code.
+   `npm install` automatically installs BrainBox slash commands (`/brain-setup`, `/brain-recall`, `/brain-workflow`, etc.) to `~/.claude/skills/` via the package's postinstall script.
 
 ---
 
