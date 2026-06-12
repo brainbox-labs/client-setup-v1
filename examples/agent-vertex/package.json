@@ -1,0 +1,21 @@
+{
+  "name": "@brainbox-labs/example-agent-vertex",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/google-vertex": "^4.0.0",
+    "@modelcontextprotocol/sdk": "^1.27.0",
+    "ai": "^6.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
