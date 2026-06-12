@@ -2,6 +2,17 @@
 
 BrainBox JavaScript/TypeScript SDK — ingest data into your brain, query it programmatically, and serve it as a local MCP server.
 
+## Intro
+
+BrainBox ingests structured and unstructured data to automatically create and maintain your knowledge layer. This knowledge layer is programmable and can be used by AI agents and AI chatbots. 
+
+### Features
+- Better grounding than Claude's exploration. Makes search relevant. 
+- Closed loop learning (allows you to update the brain). Keeps information correct. 
+- Staleness detection. Keeps information fresh.
+- Backed by Graph and Wiki. Brings best of both worlds.
+- Side benefit - ground search. Improves token economics.
+
 ## Quick start
 
 ```bash
