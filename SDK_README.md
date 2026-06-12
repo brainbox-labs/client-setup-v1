@@ -4,7 +4,7 @@ BrainBox JavaScript/TypeScript SDK — ingest data into your brain, query it pro
 
 ## Intro
 
-BrainBox ingests structured and unstructured data to automatically create and maintain your knowledge layer. This knowledge layer is programmable and can be used by AI agents and AI chatbots. 
+BrainBox ingests structured and unstructured data to automatically create and maintain your knowledge layer. This knowledge layer is programmable and can be used by AI agents and AI chatbots. [brainbox-on-claude-web](./brainbox-on-claude-web.png)
 
 ### Features
 - Better grounding than Claude's exploration. Makes search relevant. 
