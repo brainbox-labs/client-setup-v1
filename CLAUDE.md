@@ -1,6 +1,9 @@
 # BrainBox Client Setup
 
-This repository provides everything you need to explore the BrainBox intelligence layer built for your proof of concept — including the local development server, MCP integrations, and guided workflows for querying your data.
+This repository provides everything you need to explore the BrainBox context layer for your agents — including creating and querying your knowledge base and MCP integrations.
+
+- **Product / app:** https://ctx.brainbox-ai.app/
+- **Website:** https://brainbox-ai.app/
 
 ---
 
@@ -10,10 +13,23 @@ Before getting started, obtain the following from the BrainBox team:
 
 | Credential | Purpose |
 |---|---|
-| `NPM_TOKEN` | Installs the BrainBox CLI and skills |
+| `NODE_AUTH_TOKEN` | GitHub token — installs the BrainBox CLI and skills from `npm.pkg.github.com` |
 | Org & project name | Identifies your BrainBox project |
 | `BRAINBOX_API_KEY` | Org-level key for CLI operations (starts with `bb_`) |
 | `BRAINBOX_MCP_KEY` | Project-level key for the BrainBox MCP server (starts with `bb_proj_`) |
+| `BRAINBOX_TENANT_KEY` | Tenant-level key for the BrainBox MCP server (starts with `bb_tenant_`) |
+
+### Knowledge scopes
+
+BrainBox knowledge can be shared or isolated at three levels — pick whichever key/URL pair the BrainBox team gives you:
+
+| Scope | Covers | Access | Key prefix | MCP path |
+|---|---|---|---|---|
+| **Project** | One project's knowledge only | Read / write | `bb_proj_` | `/api/mcp` |
+| **Tenant** | One or more projects grouped together | Read-only (learnings save to the tenant scope; an admin can later promote them into a project) | `bb_tenant_` | `/api/tenant-mcp` |
+| **Org** | Every project in the org | Confirm with BrainBox team | `bb_` (same as `BRAINBOX_API_KEY`) | `/api/org-mcp` |
+
+Only set up the MCP server for the scope you were actually given — the configs for all three are below.
 
 ---
 
@@ -33,7 +49,9 @@ Before getting started, obtain the following from the BrainBox team:
    npm install
    ```
 
-   `npm install` automatically installs BrainBox slash commands (`/brain-setup`, `/brain-recall`, `/brain-workflow`, etc.) to `~/.claude/skills/` via the package's postinstall script.
+   `npm install` triggers the package's `prepare` script (`skills-npm`), which interactively asks which agent you use (Claude Code, Codex, etc.) and installs the matching BrainBox slash commands (`/brain-setup`, `/brain-ingest`, `/brain-recall`, `/brain-workflow`, etc.) to `~/.claude/skills/`.
+
+   Run `npm update` later to pick up new CLI/skill versions as needed.
 
 ---
 
@@ -41,7 +59,9 @@ Before getting started, obtain the following from the BrainBox team:
 
 ### BrainBox MCP (cloud — brain knowledge layer)
 
-Add the following to your Claude MCP configuration (e.g., `.mcp.json`):
+Add the following to your Claude MCP configuration (e.g., `.mcp.json`). Use whichever scope matches the key the BrainBox team gave you:
+
+**Project-level** (scoped to a single BrainBox project, key starts with `bb_proj_`):
 
 ```json
 {
@@ -57,30 +77,50 @@ Add the following to your Claude MCP configuration (e.g., `.mcp.json`):
 }
 ```
 
-### Local MCP (live SQL data access)
+**Tenant-level** (key starts with `bb_tenant_`):
 
-First, start the local development server:
-
-```bash
-./node_modules/.bin/brainbox dev start --no-brain
+```json
+{
+  "mcpServers": {
+    "brainTenant": {
+      "url": "https://ctx.brainbox-ai.app/api/tenant-mcp",
+      "headers": {
+        "Authorization": "Bearer <BRAINBOX_TENANT_KEY>"
+      },
+      "type": "http"
+    }
+  }
+}
 ```
 
-Then register it with Claude Code:
+**Org-level** (org-wide across all projects, key starts with `bb_` — same key as `BRAINBOX_API_KEY`):
 
-```bash
-claude mcp add --transport http brainbox-local http://localhost:3100/mcp
+```json
+{
+  "mcpServers": {
+    "brainOrg": {
+      "url": "https://ctx.brainbox-ai.app/api/org-mcp",
+      "headers": {
+        "Authorization": "Bearer <BRAINBOX_API_KEY>"
+      },
+      "type": "http"
+    }
+  }
+}
 ```
 
 ---
 
 ## Ingesting Data into the Brain
 
-Use the `/brain-learn` skill to teach BrainBox about your data. It supports two paths:
+Use the `/brain-ingest` skill to teach BrainBox about your data. It supports two paths:
 
-- **Postgres schemas / documents** — staged through the connector pipeline (`ingest → commit → push → generate → approve`)
+- **Postgres schemas / documents** — staged through the connector pipeline (`stage → commit → push → generate → approve`)
 - **Events (meeting notes, emails, tickets)** — sent directly via the `process_event` MCP tool, no pipeline needed
 
-To start, simply run `/brain-learn` in Claude Code and follow the guided steps.
+To start, simply run `/brain-ingest` in Claude Code and follow the guided steps.
+
+> **Athena / other warehouses:** connect via a Trino connection string (`brainbox ingest db trino://...`) with `--dialect athena`. Requires `@brainbox-labs/cli` >= 0.9.0 — run `npm update` if `brainbox --version` reports older.
 
 ---
 
@@ -96,7 +136,25 @@ Always follow this order to orient before drilling in:
 2. `get_learnings` — **required** if `get_index` returns a non-empty `learnings` array
 3. `explain_concept`, `trace_workflow`, `find_governing_rules`, etc. — targeted exploration
 
-### Direct database access
+---
+
+### Local MCP (live SQL data access)
+
+Advanced, experimental use case: BrainBox can generate MCP tools tailored to your SQL queries. To use those generated tools, run the MCP server locally against your own database.
+
+First, start the local development server:
+
+```bash
+./node_modules/.bin/brainbox dev start --no-brain
+```
+
+Then register it with Claude Code:
+
+```bash
+claude mcp add --transport http brainbox-local http://localhost:3100/mcp
+```
+
+#### Direct database access
 
 If the local MCP tools do not cover a query, connect directly:
 
@@ -105,3 +163,4 @@ psql $DATABASE_URL
 ```
 
 The `DATABASE_URL` credential is defined in your `.env` file.
+

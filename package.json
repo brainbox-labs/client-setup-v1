@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "@brainbox-labs/cli": "^0.4.1",
-    "@brainbox-labs/sdk": "^0.4.0",
-    "@brainbox-labs/skills": "^1.1.1"
+    "@brainbox-labs/cli": "*",
+    "@brainbox-labs/sdk": "*",
+    "@brainbox-labs/skills": "*"
   },
   "scripts": {
     "prepare": "skills-npm"
