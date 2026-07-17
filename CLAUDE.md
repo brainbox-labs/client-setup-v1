@@ -55,9 +55,21 @@ Only set up the MCP server for the scope(s) you actually need — the configs fo
 
 ---
 
-## MCP Server Configuration
+## Ingesting Data into the Brain
 
-### BrainBox MCP (cloud — brain knowledge layer)
+Use the `/brain-ingest` skill to teach BrainBox about your data — Postgres schemas / documents are staged through the connector pipeline (`stage → commit → push → generate → approve`).
+
+To start, simply run `/brain-ingest` in Claude Code and follow the guided steps.
+
+> **Athena / other warehouses:** connect via a Trino connection string (`brainbox ingest db trino://...`) with `--dialect athena`. Requires `@brainbox-labs/cli` >= 0.9.0 — run `npm update` if `brainbox --version` reports older.
+
+---
+
+## Querying the Brain
+
+The BrainBox brain describes **what** your data means — entities, relationships, business rules, and workflows. For live data, use the local MCP tools or direct database access.
+
+### MCP Server Configuration
 
 Add the following to your Claude MCP configuration (e.g., `.mcp.json`). Use whichever scope matches the key you generated from the [orgs page](https://ctx.brainbox-ai.app/orgs):
 
@@ -110,20 +122,6 @@ Add the following to your Claude MCP configuration (e.g., `.mcp.json`). Use whic
 ```
 
 ---
-
-## Ingesting Data into the Brain
-
-Use the `/brain-ingest` skill to teach BrainBox about your data — Postgres schemas / documents are staged through the connector pipeline (`stage → commit → push → generate → approve`).
-
-To start, simply run `/brain-ingest` in Claude Code and follow the guided steps.
-
-> **Athena / other warehouses:** connect via a Trino connection string (`brainbox ingest db trino://...`) with `--dialect athena`. Requires `@brainbox-labs/cli` >= 0.9.0 — run `npm update` if `brainbox --version` reports older.
-
----
-
-## Querying the Brain
-
-The BrainBox brain describes **what** your data means — entities, relationships, business rules, and workflows. For live data, use the local MCP tools or direct database access.
 
 ### Recommended tool call sequence
 
