@@ -4,5 +4,10 @@
     "@brainbox-labs/sdk": "^0.4.0",
     "@brainbox-labs/skills": "^1.1.1"
   },
-  "scripts": {}
+  "scripts": {
+    "prepare": "skills-npm"
+  },
+  "devDependencies": {
+    "skills-npm": "^1.2.0"
+  }
 }
