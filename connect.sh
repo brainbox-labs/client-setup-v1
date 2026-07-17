@@ -11,7 +11,9 @@
 #
 # DATABASE_URL accepts:
 #   postgres://user:pass@host:5432/dbname
-#   trino://user[:password]@host[:port]/catalog[/schema]
+#   trino://user[:password]@host:8080/catalog[/schema][?ssl=true]
+#     e.g. trino://analyst:secret@trino.internal:8080/hive/analytics?ssl=true
+#     (requires the optional "trino-client" npm package)
 #   athena://<region>/<database>?catalog=AwsDataCatalog&workgroup=primary&output=s3://my-athena-results-bucket/
 #     (athena:// / awsathena:// also require AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY in .env)
 #
