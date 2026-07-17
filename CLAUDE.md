@@ -61,6 +61,8 @@ Use the `/brain-ingest` skill to teach BrainBox about your data — Postgres sch
 
 To start, simply run `/brain-ingest` in Claude Code and follow the guided steps.
 
+> **Postgres:** use `postgres://user:pass@host:5432/dbname` as `DATABASE_URL`, e.g. `postgres://analyst:secret@db.internal:5432/analytics`.
+>
 > **Athena:** use a native `athena://<region>/<database>?catalog=AwsDataCatalog&workgroup=primary&output=s3://your-results-bucket/` URL as `DATABASE_URL`. Requires `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in `.env`, and `@brainbox-labs/cli` >= 0.9.0 — run `npm update` if `brainbox --version` reports older. (Trino connection strings with `--dialect athena` also work if you're federating through an existing Trino cluster.)
 >
 > **Trino:** use `trino://user[:password]@host:8080/catalog[/schema][?ssl=true]` as `DATABASE_URL`, e.g. `trino://analyst:secret@trino.internal:8080/hive/analytics?ssl=true`. Requires the optional `trino-client` npm package to be installed.
