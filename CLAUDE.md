@@ -9,7 +9,7 @@ This repository provides everything you need to explore the BrainBox context lay
 
 ## Prerequisites
 
-Before getting started, obtain the following from the BrainBox team:
+Before getting started, obtain the following (your org admin can generate these from the BrainBox app at [ctx.brainbox-ai.app/orgs](https://ctx.brainbox-ai.app/orgs) — open your org's API keys page for org/tenant keys, or a project's page for its project key):
 
 | Credential | Purpose |
 |---|---|
@@ -21,15 +21,15 @@ Before getting started, obtain the following from the BrainBox team:
 
 ### Knowledge scopes
 
-BrainBox knowledge can be shared or isolated at three levels — pick whichever key/URL pair the BrainBox team gives you:
+BrainBox knowledge can be shared or isolated at three levels — pick whichever key/URL pair fits how you want to query:
 
 | Scope | Covers | Access | Key prefix | MCP path |
 |---|---|---|---|---|
 | **Project** | One project's knowledge only | Read / write | `bb_proj_` | `/api/mcp` |
 | **Tenant** | One or more projects grouped together | Read-only (learnings save to the tenant scope; an admin can later promote them into a project) | `bb_tenant_` | `/api/tenant-mcp` |
-| **Org** | Every project in the org | Confirm with BrainBox team | `bb_` (same as `BRAINBOX_API_KEY`) | `/api/org-mcp` |
+| **Org** | Every project in the org | Confirm access level on the [orgs page](https://ctx.brainbox-ai.app/orgs) | `bb_` (same as `BRAINBOX_API_KEY`) | `/api/org-mcp` |
 
-Only set up the MCP server for the scope you were actually given — the configs for all three are below.
+Only set up the MCP server for the scope(s) you actually need — the configs for all three are below.
 
 ---
 
@@ -59,7 +59,7 @@ Only set up the MCP server for the scope you were actually given — the configs
 
 ### BrainBox MCP (cloud — brain knowledge layer)
 
-Add the following to your Claude MCP configuration (e.g., `.mcp.json`). Use whichever scope matches the key the BrainBox team gave you:
+Add the following to your Claude MCP configuration (e.g., `.mcp.json`). Use whichever scope matches the key you generated from the [orgs page](https://ctx.brainbox-ai.app/orgs):
 
 **Project-level** (scoped to a single BrainBox project, key starts with `bb_proj_`):
 
@@ -113,10 +113,7 @@ Add the following to your Claude MCP configuration (e.g., `.mcp.json`). Use whic
 
 ## Ingesting Data into the Brain
 
-Use the `/brain-ingest` skill to teach BrainBox about your data. It supports two paths:
-
-- **Postgres schemas / documents** — staged through the connector pipeline (`stage → commit → push → generate → approve`)
-- **Events (meeting notes, emails, tickets)** — sent directly via the `process_event` MCP tool, no pipeline needed
+Use the `/brain-ingest` skill to teach BrainBox about your data — Postgres schemas / documents are staged through the connector pipeline (`stage → commit → push → generate → approve`).
 
 To start, simply run `/brain-ingest` in Claude Code and follow the guided steps.
 
@@ -133,8 +130,8 @@ The BrainBox brain describes **what** your data means — entities, relationship
 Always follow this order to orient before drilling in:
 
 1. `get_index` — retrieve an orientation snapshot of the brain
-2. `get_learnings` — **required** if `get_index` returns a non-empty `learnings` array
-3. `explain_concept`, `trace_workflow`, `find_governing_rules`, etc. — targeted exploration
+2. `get_learnings` / `save_learning` — **required** if `get_index` returns a non-empty `learnings` array; save new learnings back as you go
+3. `recall_domain`, `recall_wiki`, `research_task` — targeted exploration
 
 ---
 
