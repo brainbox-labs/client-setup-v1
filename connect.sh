@@ -4,9 +4,17 @@
 #   2. Stage sources
 #   3. Commit + push
 #   4. Generate context layer (LLM, ~2-5 min) — run manually
-#   5. Pull active layer — run manually
+#   5. Review + approve — run manually
+#   6. Pull active layer — run manually
 #
 # Prerequisites: .env loaded with DATABASE_URL, BRAINBOX_ORG, BRAINBOX_PROJECT
+#
+# DATABASE_URL accepts:
+#   postgres://user:pass@host:5432/dbname
+#   trino://user[:password]@host[:port]/catalog[/schema]
+#   athena://<region>/<database>?catalog=AwsDataCatalog&workgroup=primary&output=s3://my-athena-results-bucket/
+#     (athena:// / awsathena:// also require AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY in .env)
+#
 # Usage: npm run connect
 
 set -euo pipefail
@@ -52,13 +60,18 @@ echo " Done! Next steps (run manually):"
 echo ""
 echo " 4. Generate context layer (~2-5 min):"
 echo "    brainbox repo meta create -m \"initial context layer\""
+echo "    brainbox repo meta status        # poll until status: ready"
 echo ""
-echo " 5. Pull the active layer once approved:"
+echo " 5. Review the generated annotations at the review URL printed above,"
+echo "    then approve once you're happy with them:"
+echo "    brainbox repo meta approve"
+echo ""
+echo " 6. Pull the active layer:"
 echo "    brainbox repo pull"
 echo ""
-echo " 6. Register the BrainBox MCP server with Claude Code:"
+echo " 7. Register the BrainBox MCP server with Claude Code:"
 echo "    claude mcp add --transport http --scope project brain https://ctx.brainbox-ai.app/api/mcp --header \"Authorization: Bearer \$BRAINBOX_MCP_KEY\""
 echo ""
-echo " 7. Start the local MCP server:"
+echo " 8. Start the local MCP server:"
 echo "    npm run serve"
 echo "================================================================"

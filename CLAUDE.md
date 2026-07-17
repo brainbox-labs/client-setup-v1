@@ -61,7 +61,7 @@ Use the `/brain-ingest` skill to teach BrainBox about your data — Postgres sch
 
 To start, simply run `/brain-ingest` in Claude Code and follow the guided steps.
 
-> **Athena / other warehouses:** connect via a Trino connection string (`brainbox ingest db trino://...`) with `--dialect athena`. Requires `@brainbox-labs/cli` >= 0.9.0 — run `npm update` if `brainbox --version` reports older.
+> **Athena:** use a native `athena://<region>/<database>?catalog=AwsDataCatalog&workgroup=primary&output=s3://your-results-bucket/` URL as `DATABASE_URL`. Requires `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in `.env`, and `@brainbox-labs/cli` >= 0.9.0 — run `npm update` if `brainbox --version` reports older. (Trino connection strings with `--dialect athena` also work if you're federating through an existing Trino cluster.)
 
 ---
 
