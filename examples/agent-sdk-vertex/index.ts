@@ -1,7 +1,7 @@
 /**
  * BrainBox agent — Vertex AI (Gemini) + @brainbox-labs/sdk.
  *
- * Uses brain.recall.asTools() and brain.update.asTools() instead of a raw
+ * Uses brain.recall.asEnabledTools() and brain.update.asEnabledTools() instead of a raw
  * MCP client — no MCP connection or schema conversion boilerplate needed.
  *
  * Usage:
@@ -17,12 +17,14 @@
  */
 
 import { BrainBox } from '@brainbox-labs/sdk';
-import type { VerbTool } from '@brainbox-labs/sdk';
 import { generateText, tool, jsonSchema, stepCountIs } from 'ai';
 import { createVertex } from '@ai-sdk/google-vertex';
 import * as readline from 'readline';
 
 const MAX_STEPS = 20;
+
+// VerbTool is not exported by the SDK; derive it from asTools().
+type VerbTool = ReturnType<BrainBox['recall']['asTools']>[number];
 
 for (const v of ['BRAINBOX_API_KEY', 'BRAINBOX_ORG', 'BRAINBOX_PROJECT']) {
   if (!process.env[v]) {
@@ -52,7 +54,7 @@ function toAITools(verbTools: VerbTool[]) {
       tool({
         description: t.description,
         inputSchema: jsonSchema(t.inputSchema),
-        execute: async (args) => JSON.stringify(await t.execute(args)),
+        execute: async (args: unknown) => JSON.stringify(await t.execute(args as Record<string, unknown>)),
       }),
     ]),
   );
@@ -64,7 +66,7 @@ const SYSTEM_PROMPT = `You are a business intelligence assistant with access to 
 
 Available tools:
 - get_index: high-level overview of entities, vocabulary, and recent learnings — start here
-- get_learnings: retrieve saved business rules and learnings
+- list_learnings: retrieve saved business rules and learnings
 - get_recent_changes: what has changed in the domain model recently
 - recall_domain: search entities, relationships, metrics, or vocabulary by query
 - recall_traces: find workflow/process traces by entity or keyword
@@ -72,7 +74,7 @@ Available tools:
 - get_trace: fetch a specific trace by ID
 - get_wiki_page: fetch a specific wiki page by ID
 - research_task: pose a free-form question; the brain synthesizes an answer across all sources
-- save_learning: save a new business rule or learning to the brain
+- create_learning: save a new business rule or learning to the brain
 - process_event: record a structured event (meeting, decision, etc.) into the brain
 
 When asked a question:
@@ -80,12 +82,13 @@ When asked a question:
 2. Use recall_domain, recall_traces, recall_wiki, or research_task to drill in.
 3. Answer with specific references to what you found.
 
-When asked to learn or record something, use save_learning or process_event.
+When asked to learn or record something, use create_learning or process_event.
 
 Be concise. Cite tool outputs to support your answers.`;
 
 async function runAgent(query: string) {
-  const verbTools = [...brain.recall.asTools(), ...brain.update.asTools()];
+  // asEnabledTools() drops tools this org has switched off (e.g. archive_*).
+  const verbTools = [...(await brain.recall.asEnabledTools()), ...(await brain.update.asEnabledTools())];
   const aiTools = toAITools(verbTools);
 
   console.log(`\nUsing ${verbTools.length} brain tools: ${verbTools.map((t) => t.name).join(', ')}\n`);

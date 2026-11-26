@@ -2,7 +2,7 @@
 
 Agentic loop using Gemini (Vertex AI) + `@brainbox-labs/sdk`.
 
-Uses `brain.recall.asTools()` and `brain.update.asTools()` — no MCP client setup needed.
+Uses `brain.recall.asEnabledTools()` and `brain.update.asEnabledTools()` — no MCP client setup needed.
 
 ## Setup
 
@@ -36,4 +36,4 @@ npx tsx index.ts
 |---|---|---|
 | Brain access | Raw MCP client | `@brainbox-labs/sdk` |
 | Auth | Project-level MCP key | Org API key |
-| Tool setup | Manual schema conversion | `brain.recall.asTools()` |
+| Tool setup | Manual schema conversion | `brain.recall.asEnabledTools()` |
