@@ -13,7 +13,6 @@ Before getting started, obtain the following (your org admin can generate these 
 
 | Credential | Purpose |
 |---|---|
-| `NODE_AUTH_TOKEN` | GitHub token — installs the BrainBox CLI and skills from `npm.pkg.github.com` |
 | Org & project name | Identifies your BrainBox project |
 | `BRAINBOX_API_KEY` | Org-level key for CLI operations (starts with `bb_`) |
 | `BRAINBOX_MCP_KEY` | Project-level key for the BrainBox MCP server (starts with `bb_proj_`) |
@@ -49,23 +48,35 @@ Only set up the MCP server for the scope(s) you actually need — the configs fo
    npm install
    ```
 
-   `npm install` triggers the package's `prepare` script (`skills-npm`), which interactively asks which agent you use (Claude Code, Codex, etc.) and installs the matching BrainBox slash commands (`/brain-setup`, `/brain-ingest`, `/brain-recall`, `/brain-workflow`, etc.) to `~/.claude/skills/`.
+   This installs the BrainBox CLI (`brainbox`) and SDK (`@brainbox-labs/sdk`) from public npm — no GitHub token or `.npmrc` needed. Run `npm update` later to pick up new versions.
 
-   Run `npm update` later to pick up new CLI/skill versions as needed.
+3. **Install the BrainBox Claude Code plugin** (provides the slash commands `/brain:brain-setup`, `/brain:brain-ingest`, `/brain:brain-recall`, `/brain:brain-workflow`, etc. and the brain MCP server):
+
+   ```bash
+   npx brainbox init
+   ```
+
+   `brainbox init` signs you in, lets you pick sample data or a project, and installs the plugin.
 
 ---
 
 ## Ingesting Data into the Brain
 
-Use the `/brain-ingest` skill to teach BrainBox about your data — Postgres schemas / documents are staged through the connector pipeline (`stage → commit → push → generate → approve`).
+Use the `/brain:brain-ingest` skill to teach BrainBox about your data — Postgres schemas / documents are staged through the connector pipeline (`stage → commit → push → generate → approve`).
 
-To start, simply run `/brain-ingest` in Claude Code and follow the guided steps.
+To start, simply run `/brain:brain-ingest` in Claude Code and follow the guided steps.
 
 > **Postgres:** use `postgres://user:pass@host:5432/dbname` as `DATABASE_URL`, e.g. `postgres://analyst:secret@db.internal:5432/analytics`.
 >
 > **Athena:** use a native `athena://<region>/<database>?catalog=AwsDataCatalog&workgroup=primary&output=s3://your-results-bucket/` URL as `DATABASE_URL`. Requires `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in `.env`, and `@brainbox-labs/cli` >= 0.9.0 — run `npm update` if `brainbox --version` reports older. (Trino connection strings with `--dialect athena` also work if you're federating through an existing Trino cluster.)
 >
 > **Trino:** use `trino://user[:password]@host:8080/catalog[/schema][?ssl=true]` as `DATABASE_URL`, e.g. `trino://analyst:secret@trino.internal:8080/hive/analytics?ssl=true`. Requires the optional `trino-client` npm package to be installed.
+
+---
+
+## TypeScript agent examples
+
+Runnable agent loops using the SDK live in [`examples/`](examples/): `agent-sdk-anthropic` (Claude, recommended starting point), `agent-sdk-vertex` (Gemini on Vertex AI), `agent-vertex` (raw MCP client), plus `ingest-and-query` and `ingest-correct-query`. Each has its own README.
 
 ---
 

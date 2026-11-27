@@ -17,7 +17,7 @@
 #   athena://<region>/<database>?catalog=AwsDataCatalog&workgroup=primary&output=s3://my-athena-results-bucket/
 #     (athena:// / awsathena:// also require AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY in .env)
 #
-# Usage: npm run connect
+# Usage: bash connect.sh
 
 set -euo pipefail
 source .env
@@ -75,5 +75,5 @@ echo " 7. Register the BrainBox MCP server with Claude Code:"
 echo "    claude mcp add --transport http --scope project brain https://ctx.brainbox-ai.app/api/mcp --header \"Authorization: Bearer \$BRAINBOX_MCP_KEY\""
 echo ""
 echo " 8. Start the local MCP server:"
-echo "    npm run serve"
+echo "    npx brainbox dev start --no-brain"
 echo "================================================================"
