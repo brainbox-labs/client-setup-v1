@@ -62,9 +62,15 @@ Only set up the MCP server for the scope(s) you actually need — the configs fo
 
 ## Ingesting Data into the Brain
 
-Use the `/brain:brain-ingest` skill to teach BrainBox about your data — Postgres schemas / documents are staged through the connector pipeline (`stage → commit → push → generate → approve`).
+Use the `/brain:brain-ingest` skill to teach BrainBox about your data — databases, SQL files and documents are ingested in one step and published as a new brain version.
 
-To start, simply run `/brain:brain-ingest` in Claude Code and follow the guided steps.
+To start, simply run `/brain:brain-ingest` in Claude Code and follow the guided steps, or run it directly from the CLI:
+
+```bash
+npx brainbox ingest "$DATABASE_URL" --org "$BRAINBOX_ORG" --project "$BRAINBOX_PROJECT"   # add --review to approve before publishing
+```
+
+`bash connect.sh` does the same using the values in `.env`.
 
 > **Postgres:** use `postgres://user:pass@host:5432/dbname` as `DATABASE_URL`, e.g. `postgres://analyst:secret@db.internal:5432/analytics`.
 >

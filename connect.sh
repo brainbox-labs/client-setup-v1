@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
-# Connects your database to BrainBox using the brainbox CLI:
-#   1. Init repo
-#   2. Stage sources
-#   3. Commit + push
-#   4. Generate context layer (LLM, ~2-5 min) — run manually
-#   5. Review + approve — run manually
-#   6. Pull active layer — run manually
+# Connects your database to BrainBox with a single `brainbox ingest` call
+# (stage, generate the context layer, and publish a new brain version).
 #
 # Prerequisites: .env loaded with DATABASE_URL, BRAINBOX_ORG, BRAINBOX_PROJECT
 #
@@ -43,37 +38,19 @@ else
   exit 1
 fi
 
-# ── Step 1: Init repo ─────────────────────────────────────────────────────────
-echo "[1/3] Initialising repo…"
-brainbox repo init
-
-# ── Step 2: Stage sources ─────────────────────────────────────────────────────
-echo "[2/3] Staging database…"
-brainbox meta ingest db "$DB_URL"
-
-# ── Step 3: Commit + push ─────────────────────────────────────────────────────
-echo "[3/3] Committing and pushing…"
-brainbox repo commit -m "initial schema"
-brainbox repo push
+# ── Ingest ────────────────────────────────────────────────────────────────────
+# Add --review to stop before publishing and approve later with:
+#   brainbox repo meta approve
+echo "Ingesting database (~2-5 min)…"
+brainbox ingest "$DB_URL" --org "$ORG" --project "$PROJECT"
 
 echo ""
 echo "================================================================"
 echo " Done! Next steps (run manually):"
 echo ""
-echo " 4. Generate context layer (~2-5 min):"
-echo "    brainbox repo meta create -m \"initial context layer\""
-echo "    brainbox repo meta status        # poll until status: ready"
-echo ""
-echo " 5. Review the generated annotations at the review URL printed above,"
-echo "    then approve once you're happy with them:"
-echo "    brainbox repo meta approve"
-echo ""
-echo " 6. Pull the active layer:"
-echo "    brainbox repo pull"
-echo ""
-echo " 7. Register the BrainBox MCP server with Claude Code:"
+echo " 1. Register the BrainBox MCP server with Claude Code:"
 echo "    claude mcp add --transport http --scope project brain https://ctx.brainbox-ai.app/api/mcp --header \"Authorization: Bearer \$BRAINBOX_MCP_KEY\""
 echo ""
-echo " 8. Start the local MCP server:"
+echo " 2. (Optional) Start the local MCP server for live SQL access:"
 echo "    npx brainbox dev start --no-brain"
 echo "================================================================"
