@@ -2,7 +2,3 @@
 node_modules/
 .agents/
 .claude/
-skills-lock.json
-
-# Agent skills from npm packages (managed by skills-npm)
-**/skills/npm-*
